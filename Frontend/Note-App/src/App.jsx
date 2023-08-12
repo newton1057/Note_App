@@ -5,41 +5,21 @@ import './App.css'
 import {NextUIProvider} from "@nextui-org/react";
 import {Button} from "@nextui-org/react";
 import {Card, CardHeader, CardBody, CardFooter, Divider, Link, Image} from "@nextui-org/react";
-
+import { MdCreate } from 'react-icons/md';
+import { BsFillArchiveFill } from 'react-icons/bs'; 
+import { AiFillDelete } from 'react-icons/ai'; 
+import { BrowserRouter, Routes, Route} from "react-router-dom";
+import MyNotes from './Components/MyNotes';
+import ArchivedNotes from './Components/ArchivedNotes';
 
 function App() {
   return (
-    <>
-    <h1>My notes</h1>
-    <Button color="default">
-      Create note
-    </Button>
-    <Button color="default" variant="bordered" >
-        Archive notes
-      </Button>
-      <Card className="max-w-[400px]">
-      <CardHeader className="flex gap-3">
-        <Image
-          alt="nextui logo"
-          height={40}
-          radius="sm"
-          src="https://avatars.githubusercontent.com/u/86160567?s=200&v=4"
-          width={40}
-        />
-        <div className="flex flex-col">
-          <p className="text-md">Important information</p>
-          <p className="text-small text-default-500">Last edit: 10/Jan/2021</p>
-        </div>
-      </CardHeader>
-      <Divider/>
-      
-      <CardFooter>
-      <Button color="default" variant="bordered" >
-        Archive notes
-      </Button>
-      </CardFooter>
-    </Card>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path='/' element={<MyNotes/>} />
+        <Route path='/archived' element={<ArchivedNotes/>} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
