@@ -10,11 +10,47 @@ import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure}
 import {Input} from "@nextui-org/react";
 import {Textarea} from "@nextui-org/react";
 import Delete_Notes from "./Modals/Delete_Note";
+import Note from "./Notes/Note"
+import { useState, useEffect } from 'react';
 
 function MyNotes() {
     const navigate = useNavigate();
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
+    const [notes, setNotes] = useState([]);
+    const [title, setTitle] = useState('');
+    const [content, setContent] = useState('');
+
+    const getNotes = async () =>{
+      const response = await fetch('http://localhost:3001/API_NotesApp/v1/Notes');
+      const result = await response.json();
+      setNotes(result.body);
+    } 
+
+  useEffect(() => {
+    getNotes();
+  }, []);
+
+  function Created_Note(){
+    let Data_Note = {
+      Title: title,
+      Content: content
+    }
+        fetch('http://localhost:3001/API_NotesApp/v1/Note', {
+      method: "POST",
+      body: JSON.stringify(Data_Note),
+      headers: {"Content-type": "application/json; charset=UTF-8"}
+    })
+    .then(response => response.json()) 
+    .then(json => console.log(json));
+
+    alert("Note created");
+    getNotes();
+    onOpenChange();
+    setTitle('');
+    setContent('');
+  }
     
+  
 
   return (
     <>
@@ -31,111 +67,30 @@ function MyNotes() {
       
     </div>
     <div className='flex justify-between flex-wrap'>
-      <Card className='Note'>
-        <CardHeader className="flex gap-3">
-          <Image
-            alt="nextui logo"
-            height={40}
-            radius="sm"
-            src="https://avatars.githubusercontent.com/u/86160567?s=200&v=4"
-            width={40}
-          />
-          <div className="flex flex-col">
-            <p className="text-md">Important information</p>
-            <p className="text-small text-default-500">Last edit: 10/Jan/2021</p>
-          </div>
-        </CardHeader>
-        <Divider/>
-        
-        <CardFooter className='justify-end gap-2'>
-        <Button color="default" variant="bordered" >
-          <BsFillArchiveFill />
-        </Button>
-        <Button color="default" variant="bordered" >
-          <MdCreate />
-        </Button>
-        <Button color="default" variant="bordered" >
-          <AiFillDelete />
-        </Button>
-        
-        </CardFooter>
-      </Card>
-      <Card className='Note'>
-        <CardHeader className="flex gap-3">
-          <Image
-            alt="nextui logo"
-            height={40}
-            radius="sm"
-            src="https://avatars.githubusercontent.com/u/86160567?s=200&v=4"
-            width={40}
-          />
-          <div className="flex flex-col">
-            <p className="text-md">Important information</p>
-            <p className="text-small text-default-500">Last edit: 10/Jan/2021</p>
-          </div>
-        </CardHeader>
-        <Divider/>
-        
-        <CardFooter className='justify-end gap-2'>
-        <Button color="default" variant="bordered" >
-          <BsFillArchiveFill />
-        </Button>
-        <Button color="default" variant="bordered" >
-          <MdCreate />
-        </Button>
-        
-        <Delete_Notes></Delete_Notes>
-        
-        </CardFooter>
-      </Card>
-      <Card className='Note'>
-        <CardHeader className="flex gap-3">
-          <Image
-            alt="nextui logo"
-            height={40}
-            radius="sm"
-            src="https://avatars.githubusercontent.com/u/86160567?s=200&v=4"
-            width={40}
-          />
-          <div className="flex flex-col">
-            <p className="text-md">Important information</p>
-            <p className="text-small text-default-500">Last edit: 10/Jan/2021</p>
-          </div>
-        </CardHeader>
-        <Divider/>
-        
-        <CardFooter className='justify-end gap-2'>
-        <Button color="default" variant="bordered" >
-          <BsFillArchiveFill />
-        </Button>
-        <Button color="default" variant="bordered" >
-          <MdCreate />
-        </Button>
-        <Button color="default" variant="bordered" >
-          <AiFillDelete />
-        </Button>
-        
-        </CardFooter>
-      </Card>
+    {notes.map(note => {
+            return (
+              <Note Title={note.Title} Date={new Date(note.updatedAt).toLocaleString()}/>
+            );
+          })}
+      
     </div>
+
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">Create/Edit note</ModalHeader>
               <ModalBody>
-                
-                <Input type="text" label="Title" />
+                <Input type="text" label="Title" name="Content" value= {title} onChange={event => {setTitle (event.target.value);}}/>
                 <Textarea
-                    placeholder="Enter your content"
-                    
+                    placeholder="Enter your content" name="Content" value={content} onChange={event => {setContent (event.target.value);}}
                 />
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="light" onClick={onClose}>
                   Cancel
                 </Button>
-                <Button color="success" variant="bordered" >
+                <Button color="success" variant="bordered" onClick={Created_Note}>
                   Save
                 </Button>
               </ModalFooter>
