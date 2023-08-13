@@ -13,8 +13,8 @@ Start server with npm run dev and go to the localhost that it mentions
 
 o
 
-Run RunNoteApp.sh
-In another terminal run Frontend.sh
+Run RunNoteApp.sh, 
+In another terminal run Frontend.sh, 
 go to the localhost that it mentions
 
 Yeah!!!
