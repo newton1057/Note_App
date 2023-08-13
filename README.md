@@ -11,4 +11,10 @@ Start server with npm run dev
 Go to Frontend/Note-App folder and install the dependencies with npm i
 Start server with npm run dev and go to the localhost that it mentions
 
-Check!
+o
+
+Run RunNoteApp.sh
+In another terminal run Frontend.sh
+go to the localhost that it mentions
+
+Yeah!!!
