@@ -1,11 +1,24 @@
 const router = require("express").Router();
-const {faker} = require("@faker-js/faker");
 const Notes = require("../Model/Note.model");
 
 router.get("/Notes", async(req,res) => {
     const notes = await Notes.findAll({
         where:{
             isArchived: false,
+        }
+    });
+    res.status(200).json({
+        ok: true,
+        status: 200,
+        body: notes
+    })
+})
+
+
+router.get("/NotesArchived", async(req,res) => {
+    const notes = await Notes.findAll({
+        where:{
+            isArchived: true,
         }
     });
     res.status(200).json({
@@ -63,4 +76,13 @@ router.delete("/Note", async(req,res) =>{
     })
 })
 
+router.patch("/NoteArchived", async(req,res) =>{
+    const updateNote = await Notes.update({
+        isArchived: req.body.isArchived,
+    },{
+        where: {
+            ID_Note: req.body.ID_Note,
+        }
+    })
+})
 module.exports = router;

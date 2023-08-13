@@ -9,11 +9,37 @@ import { useNavigate } from 'react-router-dom'
 import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure} from "@nextui-org/react";
 import {Input} from "@nextui-org/react";
 import {Textarea} from "@nextui-org/react";
+import { useState , useEffect} from "react";
 
-function Delete_Notes() {
+function Delete_Notes(props) {
+    const [id_note, setID_Note] = useState('');
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
+    useEffect(() => {
+      setID_Note(props.ID_Note);
+    },[])
+
+    function Delete_Note(){
+      let Data_Note = {
+          ID_Note: id_note,
+      }
+          fetch('http://localhost:3001/API_NotesApp/v1/Note', {
+        method: "DELETE",
+        body: JSON.stringify(Data_Note),
+        headers: {"Content-type": "application/json; charset=UTF-8"}
+      })
+      .then(response => response.json()) 
+      .then(json => console.log(json));
+  
+      alert("Note delete");
+
+      props.function();
+      onOpenChange();
+      //setTitle('');
+      //setContent('');
+    }
   return (
     <>
+    
         <Button color="default" variant="bordered" onPress={onOpen} >
           <AiFillDelete />
         </Button>
@@ -31,7 +57,7 @@ function Delete_Notes() {
                 <Button color="danger" variant="light" onClick={onClose}>
                   No
                 </Button>
-                <Button color="success" variant="bordered">
+                <Button color="success" variant="bordered" onClick={Delete_Note}>
                   Yes
                 </Button>
               </ModalFooter>

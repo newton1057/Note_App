@@ -11,8 +11,60 @@ import { useNavigate } from 'react-router-dom'
 import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure} from "@nextui-org/react";
 import {Input} from "@nextui-org/react";
 import {Textarea} from "@nextui-org/react";
+import { useState , useEffect} from "react";
 
 function Note(props) {
+    const [id_note, setID_Note] = useState('');
+    const [title, setTitle] = useState('');
+    const [content, setContent] = useState('');
+    const {isOpen, onOpen, onOpenChange} = useDisclosure();
+    useEffect(() => {
+        setID_Note(props.ID_Note);
+        setTitle(props.Title);
+        setContent(props.Content);
+      },[])
+
+    function Update_Note(){
+        let Data_Note = {
+            ID_Note: id_note,
+          Title: title,
+          Content: content
+        }
+            fetch('http://localhost:3001/API_NotesApp/v1/Note', {
+          method: "PATCH",
+          body: JSON.stringify(Data_Note),
+          headers: {"Content-type": "application/json; charset=UTF-8"}
+        })
+        .then(response => response.json()) 
+        .then(json => console.log(json));
+    
+        alert("Note update");
+        props.function();
+        onOpenChange();
+        //setTitle('');
+        //setContent('');
+      }
+
+      function Archived_Note(){
+        let Data_Note = {
+            ID_Note: id_note,
+            isArchived: true,
+        }
+            fetch('http://localhost:3001/API_NotesApp/v1/NoteArchived', {
+          method: "PATCH",
+          body: JSON.stringify(Data_Note),
+          headers: {"Content-type": "application/json; charset=UTF-8"}
+        })
+        .then(response => response.json()) 
+        .then(json => console.log(json));
+    
+        alert("Note archived");
+        props.function();
+        //onOpenChange();
+        //setTitle('');
+        //setContent('');
+      }
+    
     return(
         <>
         <Card className='Note'>
@@ -32,15 +84,39 @@ function Note(props) {
             <Divider/>
             
             <CardFooter className='justify-end gap-2'>
-                <Button color="default" variant="bordered" >
-                <BsFillArchiveFill />
+                <Button color="default" variant="bordered" onClick={Archived_Note}>
+                    <BsFillArchiveFill />
                 </Button>
-                <Button color="default" variant="bordered" >
+                <Button color="default" variant="bordered"  onPress={onOpen} >
                 <MdCreate />
                 </Button>
-                <Delete_Notes></Delete_Notes>
+                <Delete_Notes function={props.function} ID_Note={props.ID_Note}/>
             </CardFooter>
         </Card>
+        <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">Create/Edit note</ModalHeader>
+              <ModalBody>
+                <Input type="text" label="Title" name="Content" value= {title} onChange={event => {setTitle (event.target.value);}}/>
+                <Textarea
+                    placeholder="Enter your content" name="Content" value={content} onChange={event => {setContent (event.target.value);}}
+                />
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onClick={onClose}>
+                  Cancel
+                </Button>
+                <Button color="success" variant="bordered" onClick={Update_Note} >
+                  Save
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+
         </>
     )
 }

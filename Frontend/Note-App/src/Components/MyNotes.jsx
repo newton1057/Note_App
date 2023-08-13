@@ -69,7 +69,7 @@ function MyNotes() {
     <div className='flex justify-between flex-wrap'>
     {notes.map(note => {
             return (
-              <Note Title={note.Title} Date={new Date(note.updatedAt).toLocaleString()}/>
+              <Note function={getNotes} ID_Note={note.ID_Note} Title={note.Title} Content={note.Content} Date={new Date(note.updatedAt).toLocaleString()}/>
             );
           })}
       
